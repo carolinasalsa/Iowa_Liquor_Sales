@@ -61,30 +61,30 @@ and select all records */
 DESCRIBE Iowa_Liquor_Sales;
 SELECT * FROM Iowa_Liquor_Sales;
 
-/*Analytical Questions to analyize data.*/
-1. Find the total number of invoices for each store:iowa_liquor_Sales
+/*Analytical Questions to analyize data.
+1. Find the total number of invoices for each store:iowa_liquor_Sales*/
 SELECT store_number, COUNT(*) as total_invoices
 FROM Iowa_Liquor_Sales
 GROUP BY store_number;
 
-2. Calculate the total sales for each store:
+/*2. Calculate the total sales for each store*/
 SELECT store_number, SUM(item_number) as total_sales
 FROM Iowa_Liquor_Sales
 GROUP BY store_number;
 
-3. Find the top 10 stores with the highest total sales:
+/*3. Find the top 10 stores with the highest total sales*/
 SELECT store_number, SUM(item_number) as total_sales
 FROM Iowa_Liquor_Sales
 GROUP BY store_number
 ORDER BY total_sales DESC
 LIMIT 10;
 
-4. Return query where there are no stores
+/*4. Return query where there are no stores*/
 SELECT store_number, store_name, address, city, county
 FROM Iowa_Liquor_Sales
 WHERE county = 'Tama';
 
-5. Return the store with highest amount of invoices
+/*5. Return the store with highest amount of invoices*/
 SELECT store_number, store_name 
 FROM Iowa_Liquor_Sales
 GROUP BY store_number, store_name
