@@ -1,0 +1,99 @@
+/*Go website where you want to download data from, and download to desktop*/
+https://www.kaggle.com/datasets/residentmario/iowa-liquor-sales
+
+/*Log into GitBash*/
+ssh csalas25@129.153.114.72
+Password: 
+
+/*SCP command to transfer file from my computer/desktop to move file to virtual, 
+first direct terminal to personal computer desktop with first command*/
+
+cd desktop 
+/*then upload with this command*/
+
+scp /c/Users/csalas25/Desktop/Iowa_Liquor_Sales.csv csalas25@129.153.114.72:/home/csalas25
+
+/*Upload data with wget command, however this only applies to student if trying tutorial 
+due to downlaoding data and uplading it from desktop*/
+
+wget -O lowa_liquor_Sales.csv https://www.kaggle.com/datasets/residentmario/iowa-liquor-sales
+
+/*checking and making directory for the Iowa_Liquor_Sales */
+
+ls
+ls -al
+
+hdfs dfs -mkdir temp
+hdfs dfs -mkdir temp/Iowa_Liquor_Sales
+hdfs dfs -put Iowa_Liquor_Sales.csv temp/Iowa_Liquor_Sales/
+hdfs dfs -ls temp
+hdfs dfs -ls temp/Iowa_Liquor_Sales
+
+/*beeline or hive command to create table*/
+1.Type in: beeline or hive
+2.CREATE database IF NOT EXISTS csalas25;
+2.USE csalas25;
+
+/*Create able to Iowa_Liquor_Sales */
+
+CREATE TABLE IF NOT EXISTS Iowa_Liquor_Sales (
+  invoice_number INT,
+  item_number INT,
+  transaction_date DATE,
+  store_number INT,
+  store_name STRING,
+  address STRING,
+  city STRING,
+  zip_code INT,
+  store_location STRING,
+  county_number INT,
+  county STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE LOCATION '/user/csalas25/temp/Iowa_Liquor_Sales/'
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+/*Directing data into table created*/
+LOAD DATA INPATH '/user/csalas25/temp/Iowa_Liquor_Sales/Iowa_Liquor_Sales.csv' INTO TABLE Iowa_Liquor_Sales;
+
+/*Returns a description of the columns in the table, including the name of each column, its data type, 
+and select all records */
+DESCRIBE Iowa_Liquor_Sales;
+SELECT * FROM Iowa_Liquor_Sales;
+
+/*Analytical Questions to analyize data.*/
+1. Find the total number of invoices for each store:iowa_liquor_Sales
+SELECT store_number, COUNT(*) as total_invoices
+FROM Iowa_Liquor_Sales
+GROUP BY store_number;
+
+2. Calculate the total sales for each store:
+SELECT store_number, SUM(item_number) as total_sales
+FROM Iowa_Liquor_Sales
+GROUP BY store_number;
+
+3. Find the top 10 stores with the highest total sales:
+SELECT store_number, SUM(item_number) as total_sales
+FROM Iowa_Liquor_Sales
+GROUP BY store_number
+ORDER BY total_sales DESC
+LIMIT 10;
+
+4. Return query where there are no stores
+SELECT store_number, store_name, address, city, county
+FROM Iowa_Liquor_Sales
+WHERE county = 'Tama';
+
+5. Return the store with highest amount of invoices
+SELECT store_number, store_name 
+FROM Iowa_Liquor_Sales
+GROUP BY store_number, store_name
+ORDER BY COUNT(invoice_number) DESC
+LIMIT 1;
+
+
+
+
+
+
+
